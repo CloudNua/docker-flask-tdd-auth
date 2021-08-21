@@ -37,7 +37,7 @@ build:client:
     - docker build
         --cache-from $IMAGE:client
         --tag $IMAGE:client
-        --file ./services/client/Dockerfile.ci
+        --file ./services/client/Dockerfile.ci 
         "./services/client"
     - docker push $IMAGE:client
 
