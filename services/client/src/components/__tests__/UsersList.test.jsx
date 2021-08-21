@@ -27,4 +27,4 @@ it('renders a username', () => {
 it('renders', () => {
     const { asFragment } = render(<UsersList users={users}/>);
     expect(asFragment()).toMatchSnapshot();
-  });
+});
