@@ -1,14 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
 const AddUser = (props) => {
   return (
     <form onSubmit={(event) => props.addUser(event)}>
       <div className="field">
-        <label
-          className="label is-large"
-          htmlFor="input-username"
-        >Username</label>
+        <label className="label is-large" htmlFor="input-username">
+          Username
+        </label>
         <input
           name="username"
           id="input-username"
@@ -21,10 +20,9 @@ const AddUser = (props) => {
         />
       </div>
       <div className="field">
-        <label
-          className="label is-large"
-          htmlFor="input-email"
-        >Email</label>
+        <label className="label is-large" htmlFor="input-email">
+          Email
+        </label>
         <input
           name="email"
           id="input-email"
@@ -42,7 +40,7 @@ const AddUser = (props) => {
         value="Submit"
       />
     </form>
-  )
+  );
 };
 
 AddUser.propTypes = {

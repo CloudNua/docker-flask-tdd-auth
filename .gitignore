@@ -1,4 +1,5 @@
 __pycache__
 env
+htmlcov
 .coverage
-htmlcov/
+node_modules
