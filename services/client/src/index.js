@@ -1,18 +1,27 @@
 import React, { Component } from 'react';  // new
 import ReactDOM from 'react-dom';
 import axios from 'axios';
+import UsersList from './components/UsersList';
 
 
-// new
+
 class App extends Component {
+
   constructor() {
     super();
+
+    this.state = {
+      users: []
+    };
+  };
+
+  componentDidMount() {
     this.getUsers();
-  }
+  };
 
   getUsers() {
     axios.get(`${process.env.REACT_APP_API_SERVICE_URL}/users`)
-    .then((res) => { console.log(res.data); })
+    .then((res) => { this.setState({ users: res.data }); })
     .catch((err) => { console.log(err); });
   }
 
@@ -25,6 +34,7 @@ class App extends Component {
               <br/>
               <h1 className="title is-1">Users</h1>
               <hr/><br/>
+              <UsersList users={this.state.users}/>
             </div>
           </div>
         </div>
