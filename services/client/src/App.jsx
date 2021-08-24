@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import { Route, Switch } from "react-router-dom";
 import axios from "axios";
-import PropTypes from "prop-types";
+import { Route, Switch } from "react-router-dom";
 
 import UsersList from "./components/UsersList";
 import AddUser from "./components/AddUser";
@@ -14,29 +13,20 @@ class App extends Component {
   constructor() {
     super();
 
+    // updated
     this.state = {
       users: [],
-      username: "",
-      email: "",
       title: "CloudNua.io",
     };
 
     this.addUser = this.addUser.bind(this);
-    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
     this.getUsers();
   }
 
-  addUser(event) {
-    event.preventDefault();
-
-    const data = {
-      username: this.state.username,
-      email: this.state.email,
-    };
-
+  addUser(data) {
     axios
       .post(`${process.env.REACT_APP_API_SERVICE_URL}/users`, data)
       .then((res) => {
@@ -59,12 +49,6 @@ class App extends Component {
       });
   }
 
-  handleChange(event) {
-    const obj = {};
-    obj[event.target.name] = event.target.value;
-    this.setState(obj);
-  }
-
   render() {
     return (
       <div>
@@ -83,13 +67,8 @@ class App extends Component {
                         <h1 className="title is-1">Users</h1>
                         <hr />
                         <br />
-                        <AddUser
-                          username={this.state.username}
-                          email={this.state.email}
-                          addUser={this.addUser}
-                          // eslint-disable-next-line react/jsx-handler-names
-                          handleChange={this.handleChange}
-                        />
+                        {/* updated */}
+                        <AddUser addUser={this.addUser} />
                         <br />
                         <br />
                         <UsersList users={this.state.users} />
@@ -108,4 +87,5 @@ class App extends Component {
     );
   }
 }
+
 export default App;
