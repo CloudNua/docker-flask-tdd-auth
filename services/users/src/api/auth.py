@@ -1,10 +1,10 @@
+import jwt
 from flask import request
 from flask_restx import Namespace, Resource, fields
-from src import bcrypt
-import jwt
 
+from src import bcrypt
+from src.api.users.crud import add_user, get_user_by_email, get_user_by_id
 from src.api.users.models import User
-from src.api.users.crud import get_user_by_email, get_user_by_id, add_user
 
 auth_namespace = Namespace("auth")
 
@@ -78,10 +78,7 @@ class Login(Resource):
         access_token = user.encode_token(user.id, "access")
         refresh_token = user.encode_token(user.id, "refresh")
 
-        response_object = {
-            "access_token": access_token,
-            "refresh_token": refresh_token
-        }
+        response_object = {"access_token": access_token, "refresh_token": refresh_token}
         return response_object, 200
 
 
