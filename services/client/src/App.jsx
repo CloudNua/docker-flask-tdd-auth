@@ -13,13 +13,18 @@ class App extends Component {
   constructor() {
     super();
 
-    // updated
     this.state = {
       users: [],
       title: "CloudNua.io",
+      accessToken: null,
     };
 
     this.addUser = this.addUser.bind(this);
+
+    this.handleRegisterFormSubmit = this.handleRegisterFormSubmit.bind(this);
+    this.handleLoginFormSubmit = this.handleLoginFormSubmit.bind(this);
+    this.isAuthenticated = this.isAuthenticated.bind(this);
+    this.logoutUser = this.logoutUser.bind(this);
   }
 
   componentDidMount() {
@@ -49,10 +54,68 @@ class App extends Component {
       });
   }
 
+  handleRegisterFormSubmit(data) {
+    const url = `${process.env.REACT_APP_API_SERVICE_URL}/auth/register`;
+    axios
+      .post(url, data)
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  handleLoginFormSubmit(data) {
+    const url = `${process.env.REACT_APP_API_SERVICE_URL}/auth/login`;
+    axios
+      .post(url, data)
+      .then((res) => {
+        this.setState({ accessToken: res.data.access_token });
+        this.getUsers();
+        window.localStorage.setItem("refreshToken", res.data.refresh_token);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  isAuthenticated() {
+    if (this.state.accessToken || this.validRefresh()) {
+      return true;
+    }
+    return false;
+  }
+
+  validRefresh() {
+    const token = window.localStorage.getItem("refreshToken");
+    if (token) {
+      axios
+        .post(`${process.env.REACT_APP_API_SERVICE_URL}/auth/refresh`, {
+          refresh_token: token,
+        })
+        .then((res) => {
+          this.setState({ accessToken: res.data.access_token });
+          this.getUsers();
+          window.localStorage.setItem("refreshToken", res.data.refresh_token);
+          return true;
+        })
+        .catch((err) => {
+          return false;
+        });
+    }
+    return false;
+  }
+
+  logoutUser() {
+    window.localStorage.removeItem("refreshToken");
+    this.setState({ accessToken: null });
+  }
+
   render() {
     return (
       <div>
-        <NavBar title={this.state.title} />
+        <NavBar title={this.state.title} logoutUser={this.logoutUser} />
         <section className="section">
           <div className="container">
             <div className="columns">
@@ -67,7 +130,6 @@ class App extends Component {
                         <h1 className="title is-1">Users</h1>
                         <hr />
                         <br />
-                        {/* updated */}
                         <AddUser addUser={this.addUser} />
                         <br />
                         <br />
@@ -76,8 +138,28 @@ class App extends Component {
                     )}
                   />
                   <Route exact path="/about" component={About} />
-                  <Route exact path="/register" component={RegisterForm} />
-                  <Route exact path="/login" component={LoginForm} />
+                  <Route
+                    exact
+                    path="/register"
+                    render={() => (
+                      <RegisterForm
+                        // eslint-disable-next-line react/jsx-handler-names
+                        handleRegisterFormSubmit={this.handleRegisterFormSubmit}
+                        isAuthenticated={this.isAuthenticated}
+                      />
+                    )}
+                  />
+                  <Route
+                    exact
+                    path="/login"
+                    render={() => (
+                      <LoginForm
+                        // eslint-disable-next-line react/jsx-handler-names
+                        handleLoginFormSubmit={this.handleLoginFormSubmit}
+                        isAuthenticated={this.isAuthenticated}
+                      />
+                    )}
+                  />
                 </Switch>
               </div>
             </div>

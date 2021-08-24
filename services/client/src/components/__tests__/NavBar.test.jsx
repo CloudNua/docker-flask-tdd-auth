@@ -5,14 +5,19 @@ import NavBar from "../NavBar";
 
 afterEach(cleanup);
 
-const title = "CloudNua.io";
+const props = {
+  title: "CloudNua.io",
+  logoutUser: () => {
+    return true;
+  },
+};
 
 it("renders a title", () => {
-  const { getByText } = renderWithRouter(<NavBar title={title} />);
-  expect(getByText(title)).toHaveClass("nav-title");
+  const { getByText } = renderWithRouter(<NavBar {...props} />);
+  expect(getByText(props.title)).toHaveClass("nav-title");
 });
 
 it("renders", () => {
-  const { asFragment } = renderWithRouter(<NavBar title={title} />);
+  const { asFragment } = renderWithRouter(<NavBar {...props} />);
   expect(asFragment()).toMatchSnapshot();
 });
