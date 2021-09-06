@@ -1,7 +1,7 @@
-import Modal from "react-modal";
 import React, { Component } from "react";
 import axios from "axios";
 import { Route, Switch } from "react-router-dom";
+import Modal from "react-modal";
 
 import UsersList from "./components/UsersList";
 import About from "./components/About";
@@ -36,16 +36,6 @@ class App extends Component {
       messageText: null,
       showModal: false,
     };
-
-    this.handleLoginFormSubmit = this.handleLoginFormSubmit.bind(this);
-
-    {
-      this.isAuthenticated() && (
-        <button onClick={this.handleOpenModal} className="button is-primary">
-          Add User
-        </button>
-      );
-    }
   }
 
   componentDidMount = () => {
@@ -65,6 +55,19 @@ class App extends Component {
         console.log(err);
         this.handleCloseModal();
         this.createMessage("danger", "That user already exists.");
+      });
+  };
+
+  removeUser = (user_id) => {
+    axios
+      .delete(`${process.env.REACT_APP_API_SERVICE_URL}/users/${user_id}`)
+      .then((res) => {
+        this.getUsers();
+        this.createMessage("success", "User removed.");
+      })
+      .catch((err) => {
+        console.log(err);
+        this.createMessage("danger", "Something went wrong.");
       });
   };
 
@@ -98,10 +101,14 @@ class App extends Component {
     axios
       .post(url, data)
       .then((res) => {
-        console.log(res.data);
+        this.setState({ accessToken: res.data.access_token });
+        this.getUsers();
+        window.localStorage.setItem("refreshToken", res.data.refresh_token);
+        this.createMessage("success", "You have logged in successfully.");
       })
       .catch((err) => {
         console.log(err);
+        this.createMessage("danger", "Incorrect email and/or password.");
       });
   };
 
@@ -192,12 +199,14 @@ class App extends Component {
                         <h1 className="title is-1">Users</h1>
                         <hr />
                         <br />
-                        <button
-                          onClick={this.handleOpenModal}
-                          className="button is-primary"
-                        >
-                          Add User
-                        </button>
+                        {this.isAuthenticated() && (
+                          <button
+                            onClick={this.handleOpenModal}
+                            className="button is-primary"
+                          >
+                            Add User
+                          </button>
+                        )}
                         <br />
                         <br />
                         <Modal
